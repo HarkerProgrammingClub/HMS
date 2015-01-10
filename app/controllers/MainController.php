@@ -2,6 +2,6 @@
 
 class MainController extends BaseController {
 	public function home() {
-		return View::make('home')
+		return View::make('home');
 	}
 }
