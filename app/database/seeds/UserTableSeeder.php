@@ -8,7 +8,7 @@ class UserTableSeeder extends Seeder {
 
 		DB::connection('auth')->table('users')->insert(array(
 			array(
-				'username' => '27JohnD',
+				'username' => '25JohnD',
 				'password' => Hash::make('Password'),
 				'type' => 'student'
 			),
@@ -19,6 +19,11 @@ class UserTableSeeder extends Seeder {
 			),
 			array(
 				'username' => 'aParent',
+				'password' => Hash::make('pAsWoRd'),
+				'type' => 'parent'
+			),
+			array(
+				'username' => 'aParent2',
 				'password' => Hash::make('pAsWoRd'),
 				'type' => 'parent'
 			),
@@ -34,13 +39,16 @@ class UserTableSeeder extends Seeder {
 			)
 		));
 
-		$otherTables = DB::connection('auth')->select("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_NAME != 'users' and TABLE_NAME != 'migrations' and TABLE_SCHEMA = 'hms'");
-		foreach($otherTables as &$descriptor) {
+		$otherTables = DB::connection('auth')
+			->select("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_NAME != 'users' and TABLE_NAME != 'migrations' and TABLE_SCHEMA ='hms'");
+		foreach($otherTables as $descriptor) {
 			DB::connection('auth')->statement('drop table '.$descriptor->TABLE_NAME);
 		}
-		$users = DB::connection('auth')->select("select id,type from users");
+		$users = DB::connection('auth')->table('users')
+			->select('id', 'type')
+			->get();
 		$student = 0;
-		foreach($users as &$descriptor) {
+		foreach($users as $descriptor) {
 			$tableName = 'user'.$descriptor->id;
 			if($descriptor->type == 'student') $student = $descriptor->id;
 			if($descriptor->type == 'student' || $descriptor->type == 'teacher') {

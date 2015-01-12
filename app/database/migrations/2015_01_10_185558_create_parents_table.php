@@ -13,7 +13,7 @@ class CreateParentsTable extends Migration {
 	public function up()
 	{
 		Schema::connection('info')->create('parents', function($table) {
-			$table->increments('id');
+			$table->integer('id');
 			$table->string('firstname');
 			$table->string('lastname');
 			$table->string('email');
@@ -21,7 +21,6 @@ class CreateParentsTable extends Migration {
 			$table->mediumInteger('zipcode');
 			$table->string('city');
 			$table->string('state');
-			$table->char('stateabbr', 2);
 		});
 	}
 
