@@ -38,12 +38,13 @@ class UserTableSeeder extends Seeder {
 				'type' => 'superadmin'
 			)
 		));
-
-		$otherTables = DB::connection('auth')
-			->select("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where TABLE_NAME != 'users' and TABLE_NAME != 'migrations' and TABLE_SCHEMA ='hms'");
-		foreach($otherTables as $descriptor) {
-			DB::connection('auth')->statement('drop table '.$descriptor->TABLE_NAME);
-		}
+		DB::connection('auth')->table('classes')->delete();
+		DB::connection('auth')->table('classes')->insert(array(
+			array(
+				'class' => 'Spanish 2M',
+				'period' => 1
+			)
+		));
 		$users = DB::connection('auth')->table('users')
 			->select('id', 'type')
 			->get();
@@ -53,13 +54,14 @@ class UserTableSeeder extends Seeder {
 			if($descriptor->type == 'student') $student = $descriptor->id;
 			if($descriptor->type == 'student' || $descriptor->type == 'teacher') {
 				Schema::connection('auth')->create($tableName, function($table) {
-					$table->string('class');
-					$table->tinyInteger('period');
+					$table->integer('classId')->unsigned();
+					$table->foreign('classId')
+						->references('id')
+						->on('classes');
 				});
 				DB::connection('auth')->table($tableName)->insert(array(
 					array(
-						'class' => 'Spanish 2M',
-						'period' => 1
+						'classId' => DB::connection('auth')->table('classes')->where('class', 'Spanish 2M')->pluck('id')
 					)
 				));
 			} else if($descriptor->type == 'parent') {

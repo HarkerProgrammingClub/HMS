@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Expression;
 
 class CreateTeachersTable extends Migration {
 
@@ -13,7 +14,10 @@ class CreateTeachersTable extends Migration {
 	public function up()
 	{
 		Schema::connection('info')->create('teachers', function($table) {
-			$table->integer('id');
+			$table->integer('id')->unsigned();
+			$table->foreign('id')
+				->references('id')
+				->on(new Expression('hms.users'));
 			$table->string('firstname');
 			$table->string('lastname');
 			$table->string('email');
